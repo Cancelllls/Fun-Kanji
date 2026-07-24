@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:fun_with_kanji/l10n/l10n.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:text_to_speech/text_to_speech.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 import 'package:fun_with_kanji/config/config_keys.dart';
 import 'package:fun_with_kanji/models/fun_with_kanji.dart';
@@ -45,7 +45,7 @@ class LearningController extends State<LearningPage> {
   bool showHint = false;
   late ConfettiController confettiController;
 
-  TextToSpeech? tts;
+  FlutterTts? tts;
 
   void _loadNextCharacter() async {
     try {
@@ -338,7 +338,7 @@ class LearningController extends State<LearningPage> {
     }
     if (preferences.getBool(ConfigKeys.readOutLoud) != false &&
         !Platform.isLinux) {
-      tts = TextToSpeech();
+      tts = FlutterTts();
       if ({
         WritingSystem.hiragana,
         WritingSystem.katakana,
