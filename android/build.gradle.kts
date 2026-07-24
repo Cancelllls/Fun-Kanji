@@ -23,6 +23,9 @@ subprojects {
         afterEvaluate {
             val androidExtension = project.extensions.findByName("android") as? com.android.build.gradle.LibraryExtension
             androidExtension?.namespace = "dev.isar.isar_flutter_libs"
+            // isar_flutter_libs ships with compileSdkVersion 30 which is too old;
+            // its transitive dependencies require lStar (API 31+).
+            androidExtension?.compileSdk = 35
         }
     }
 }
