@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "krillefear.funny_kanji"
+    namespace = "krillefear.funwithkanji"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
