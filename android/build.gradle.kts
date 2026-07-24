@@ -17,6 +17,14 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(":app")
+    
+    // Fix namespace issue for isar_flutter_libs with newer AGP
+    if (project.name == "isar_flutter_libs") {
+        afterEvaluate {
+            val androidExtension = project.extensions.findByName("android") as? com.android.build.gradle.LibraryExtension
+            androidExtension?.namespace = "dev.isar.isar_flutter_libs"
+        }
+    }
 }
 
 tasks.register<Delete>("clean") {
