@@ -1,81 +1,84 @@
-# Fun Kanji
+<div align="center">
+  <img src="assets/logo.png" alt="Fun Kanji Logo" width="160" height="160">
+  
+  # Fun Kanji
 
-![Build & Test](https://github.com/krille-chan/fun-with-kanji/actions/workflows/build-and-test.yaml/badge.svg)
-![Lines of code](https://img.shields.io/tokei/lines/github/krille-chan/fun-with-kanji?color=blue&label=lines%20of%20code)
+  **The Ultimate All-in-One Japanese Writing System Companion**
 
-With Fun Kanji you are able to learn **all** common used Japanese characters. All starts with Hiragana, Katakana and their special cases and combinations. After this you learn the Kanji Radicals and then you are ready to start with the 2136 Jōyō-Kanji. You no longer need 4 different apps to learn them!
+  [![Build & Test](https://github.com/Cancelllls/fun-with-kanji/actions/workflows/integrate.yml/badge.svg)](https://github.com/Cancelllls/fun-with-kanji/actions)
+  [![Build APK](https://github.com/Cancelllls/fun-with-kanji/actions/workflows/build-apk.yml/badge.svg)](https://github.com/Cancelllls/fun-with-kanji/actions)
+  [![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
+</div>
 
-**HUGE CREDIT AND THANKS** to the original author **krille-chan** and the contributors of **Fun With Kanji** for creating the amazing foundation of this app!
+<br>
 
-| <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="home" width="300" height="auto" />  | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" alt="home" width="300" height="auto" />  | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" alt="home" width="300" height="auto" />  |
-| ------------- |:-------------:|:-------------:|
+**Fun Kanji** is a premium, open-source Flutter application designed to guide you through mastering all commonly used Japanese characters. Say goodbye to juggling multiple apps—Fun Kanji provides a seamless learning journey from Hiragana and Katakana to Kanji Radicals, all the way through the 2,136 Jōyō Kanji.
 
-Fun Kanji is open source under Mozilla Public License 2.0. Contributions and new translations are always welcome <3.
+This project is a heavily modified and visually enhanced fork of the original [Fun With Kanji](https://github.com/krille-chan/fun-with-kanji) project. **HUGE CREDIT AND THANKS** to the original author **krille-chan** and the contributors for creating the incredible foundation of this app!
 
-## Screenshots:
+---
 
-<p float="left">
-  <img src="assets/screenshots/Simulator Screen Shot - iPhone 13 Pro - 2022-05-20 at 10.39.58.png" width="128" />
-  <img src="assets/screenshots/Simulator Screen Shot - iPhone 13 Pro - 2022-05-20 at 10.40.09.png" width="128" /> 
-  <img src="assets/screenshots/Simulator Screen Shot - iPhone 13 Pro - 2022-05-20 at 10.39.35.png" width="128" />
-  <img src="assets/screenshots/Simulator Screen Shot - iPhone 13 Pro - 2022-05-20 at 10.40.18.png" width="128" />
-  <img src="assets/screenshots/Simulator Screen Shot - iPhone 13 Pro - 2022-05-20 at 10.39.19.png" width="128" />
-  <img src="assets/screenshots/Simulator Screen Shot - iPhone 13 Pro - 2022-05-20 at 10.40.04.png" width="128" />
-</p>
+## ✨ Features
 
-## Install:
+- 🧠 **Advanced Spaced Repetition (SM-2):** Maximize your retention with our optimized spaced-repetition algorithm that tests you exactly when you're about to forget.
+- 🎨 **Premium Glassmorphism UI:** Immerse yourself in a beautiful learning environment featuring dynamic gradient backgrounds, frosted glass effects, and authentic brush stroke typography.
+- ✍️ **Stroke Order Practice:** Master character writing with our built-in drawing canvas, which tracks your strokes and provides real-time feedback.
+- 🗂️ **Custom Study Decks:** Group your characters, build personalized study decks, and learn at your own pace.
+- 🎮 **Onyomi vs. Kunyomi Minigame:** Challenge yourself to quickly distinguish between Kanji readings in a fast-paced, interactive minigame.
+- 📖 **Interactive Reading Practice:** Improve your practical comprehension by reading example sentences and breaking down individual Kanji components on the fly.
+- 🎉 **Gamified Progression:** Level up your Kanji mastery! Earn stars and unlock confetti bursts when you master a character (10 stars).
+- 📱 **Home Screen Widget:** Keep learning even when the app is closed. Get a "Kanji of the Day" right on your home screen.
+- 🔍 **Dictionary & Search:** Instantly look up any character with our powerful full-text search and offline dictionary.
+- 🌐 **100% Offline & Privacy-First:** No accounts, no cloud syncing, and absolutely zero data collection. All your learning progress is stored locally on your device.
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-     alt="Get it on F-Droid"
-     height="80">](https://f-droid.org/packages/krillefear.funwithkanji/)
-[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
-     alt="Get it on Google Play"
-     height="80">](https://play.google.com/store/apps/details?id=krillefear.funwithkanji)
+---
 
-## Build:
+## 📸 Screenshots
 
-Install [Flutter](https://flutter.dev) and run with:
+| <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="Home" width="300" height="auto" />  | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" alt="Learning" width="300" height="auto" />  | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" alt="Dictionary" width="300" height="auto" />  |
+| :---: | :---: | :---: |
+| *Beautiful Dynamic Dashboard* | *Immersive Learning Experience* | *Comprehensive Search & Dictionary* |
 
-```sh
-flutter run
-```
+---
 
-## Translate Kanji into more languages:
+## 🚀 Getting Started
 
-Import `translator` package and run this script:
+### Prerequisites
+- [Flutter](https://flutter.dev/docs/get-started/install) (Version 3.x)
+- Dart SDK
 
-```dart
-import 'dart:io';
+### Installation
 
-import 'package:translator/translator.dart';
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Cancelllls/Fun-Kanji.git
+   cd Fun-Kanji
+   ```
 
-void main() async {
-  const language = 'de';
-  for (var i = 1; i <= 8; i++) {
-    print('Load Kanji Level $i');
-    final radicalsFile = File('assets/data/kanji_level_$i.json');
-    final radicals = jsonDecode(radicalsFile.readAsStringSync()) as List;
+2. **Install dependencies:**
+   ```bash
+   flutter pub get
+   ```
 
-    final translator = GoogleTranslator();
-    for (final radical in radicals) {
-      final input = radical['meanings'].join(', ');
-      print('Translate: ${radical['kanji']} (ID: ${radical['id']}) $input ...');
-      try {
-        final translated =
-            await translator.translate(input, from: 'en', to: language);
-        radical['meanings'] = translated.text.split(', ');
-      } catch (e, s) {
-        print('Translation failed! Stop here!');
-        print(e);
-        print(s);
-        break;
-      }
-    }
+3. **Run the app:**
+   ```bash
+   flutter run
+   ```
 
-    print('Write to output file...');
-    final outputFile = File('assets/data/kanji_level_${i}_${language}.json');
-    await outputFile.writeAsString(jsonEncode(radicals));
-    print('Finished!');
-  }
-}
-```
+### Download the APK
+
+Don't want to build it yourself? You can download the latest compiled Android APK directly from the [GitHub Actions Artifacts](https://github.com/Cancelllls/Fun-Kanji/actions/workflows/build-apk.yml).
+
+---
+
+## 🤝 Contributing
+
+Contributions, bug reports, and feature requests are always welcome! 
+
+If you want to add a new translation, implement a new feature, or improve the codebase, feel free to open a Pull Request. Please make sure your code follows the existing style and passes `flutter analyze`.
+
+---
+
+## 📜 License
+
+Fun Kanji is distributed under the **Mozilla Public License 2.0**. See the [LICENSE](LICENSE) file for more information.
