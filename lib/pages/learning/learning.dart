@@ -343,7 +343,7 @@ class LearningController extends State<LearningPage> {
         WritingSystem.hiragana,
         WritingSystem.katakana,
       }.contains(widget.writingSystem)) {
-        tts?.setRate(0.5);
+        tts?.setSpeechRate(0.5);
       }
     }
 
