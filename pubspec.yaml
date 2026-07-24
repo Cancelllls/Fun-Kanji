@@ -27,12 +27,12 @@ dependencies:
   home_widget: ^0.9.3
   confetti: ^0.8.0
   flutter_staggered_animations: ^1.1.1
-  google_fonts: ^8.2.0
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
+  flutter_lints: ^3.0.0
   isar_generator: ^3.1.0+1
   build_runner: any
   flutter_launcher_icons: ^0.14.4
