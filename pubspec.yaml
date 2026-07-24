@@ -24,7 +24,7 @@ dependencies:
   collection: ^1.16.0
   file_picker: ^11.0.2
   flutter_file_saver: any
-  home_widget: ^0.9.3
+  home_widget: ^0.6.0
   confetti: ^0.8.0
   flutter_staggered_animations: ^1.1.1
   google_fonts: ^6.2.1
