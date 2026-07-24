@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-
+import 'package:fun_with_kanji/l10n/l10n.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:confetti/confetti.dart';
 import 'package:fun_with_kanji/models/kana.dart';
 import 'package:fun_with_kanji/models/kanji.dart';
 import 'package:fun_with_kanji/models/radical.dart';
@@ -10,7 +11,7 @@ import 'package:fun_with_kanji/utils/writing_system.dart';
 
 class LearningView extends StatelessWidget {
   final LearningController controller;
-  const LearningView(this.controller, {Key? key}) : super(key: key);
+  const LearningView(this.controller, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +29,11 @@ class LearningView extends StatelessWidget {
           const SizedBox(width: 4),
         ],
       ),
-      body: Builder(builder: (context) {
-        final currentCharacter = controller.currentCharacter;
-        final learningProgress = controller.learningProgress;
+      body: Stack(
+        children: [
+          Builder(builder: (context) {
+            final currentCharacter = controller.currentCharacter;
+            final learningProgress = controller.learningProgress;
         if (currentCharacter == null || learningProgress == null) {
           return const Center(
             child: CircularProgressIndicator.adaptive(),
@@ -97,9 +100,11 @@ class LearningView extends StatelessWidget {
                                           controller.enterKanjiKana
                                       ? currentCharacter.description
                                       : currentCharacter.toString(),
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 32,
+                                  style: GoogleFonts.yujiSyuku(
+                                    textStyle: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 32,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -231,6 +236,17 @@ class LearningView extends StatelessWidget {
           ]
         ]);
       }),
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConfettiWidget(
+              confettiController: controller.confettiController,
+              blastDirectionality: BlastDirectionality.explosive,
+              shouldLoop: false,
+              colors: const [Colors.green, Colors.blue, Colors.pink, Colors.orange, Colors.purple],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

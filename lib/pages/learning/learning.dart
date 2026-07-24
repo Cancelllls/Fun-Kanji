@@ -1,12 +1,13 @@
 // ignore_for_file: prefer_final_fields
 
 import 'dart:developer' as dev;
+import 'package:confetti/confetti.dart';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:fun_with_kanji/l10n/l10n.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:text_to_speech/text_to_speech.dart';
@@ -22,7 +23,7 @@ import 'package:fun_with_kanji/utils/writing_system.dart';
 
 class LearningPage extends StatefulWidget {
   final WritingSystem writingSystem;
-  const LearningPage({required this.writingSystem, Key? key}) : super(key: key);
+  const LearningPage({required this.writingSystem, super.key});
 
   @override
   LearningController createState() => LearningController();
@@ -42,6 +43,7 @@ class LearningController extends State<LearningPage> {
   bool? answerCorrect;
   String? hint;
   bool showHint = false;
+  late ConfettiController confettiController;
 
   TextToSpeech? tts;
 
@@ -305,16 +307,21 @@ class LearningController extends State<LearningPage> {
     setState(() {
       if (isCorrect && learningProgress!.stars < 10 && canLevelUp) {
         learningProgress!.stars++;
+        if (learningProgress!.stars == 10) {
+          confettiController.play();
+        }
       } else if (!isCorrect && learningProgress!.stars > 0) {
         learningProgress!.stars--;
       }
       answerCorrect = isCorrect;
     });
     if (canLevelUp || !isCorrect) {
+      int quality = isCorrect ? (started > 2 ? 3 : 5) : 0; // rough mapping for SM-2
       await FunWithKanji.of(context).setLearningProgress(
         widget.writingSystem,
         _currentId,
         learningProgress!.stars,
+        quality: quality,
       );
     }
 
@@ -348,11 +355,19 @@ class LearningController extends State<LearningPage> {
 
   @override
   void initState() {
+    super.initState();
+    confettiController = ConfettiController(duration: const Duration(seconds: 2));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadNextCharacter();
     });
     _initTts();
-    super.initState();
+  }
+
+  @override
+  void dispose() {
+    confettiController.dispose();
+    _audioPlayer?.dispose();
+    super.dispose();
   }
 
   @override

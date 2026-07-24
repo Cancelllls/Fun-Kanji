@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_file_saver/flutter_file_saver.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:fun_with_kanji/l10n/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -17,7 +17,7 @@ import 'package:fun_with_kanji/utils/theme_mode_localization.dart';
 import 'package:fun_with_kanji/widgets/theme_builder.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+  const SettingsPage({super.key});
 
   @override
   SettingsController createState() => SettingsController();
@@ -67,6 +67,11 @@ class SettingsController extends State<SettingsPage> {
   void displayAboutDialog() => showAboutDialog(
         context: context,
         applicationName: AppConstants.appName,
+        children: [
+          const Text('Developer: Antigravity User'),
+          const SizedBox(height: 16),
+          const Text('Huge thanks and credit to the original Fun with Kanji developer for creating the foundation of this app!'),
+        ],
       );
 
   void exportAction() async {
@@ -87,7 +92,7 @@ class SettingsController extends State<SettingsPage> {
   }
 
   void importAction() async {
-    final picked = await FilePicker.platform.pickFiles(
+    final picked = await FilePicker.pickFiles(
       allowedExtensions: ['json'],
       withData: true,
       type: FileType.custom,
@@ -123,26 +128,23 @@ class SettingsController extends State<SettingsPage> {
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              RadioListTile(
+              ListTile(
                 contentPadding: EdgeInsets.zero,
-                value: ThemeMode.system,
-                groupValue: groupValue,
-                onChanged: onChanged,
                 title: Text(ThemeMode.system.toLocalizedString(context)),
+                trailing: groupValue == ThemeMode.system ? const Icon(Icons.check) : null,
+                onTap: () => onChanged(ThemeMode.system),
               ),
-              RadioListTile(
+              ListTile(
                 contentPadding: EdgeInsets.zero,
-                value: ThemeMode.light,
-                groupValue: groupValue,
-                onChanged: onChanged,
                 title: Text(ThemeMode.light.toLocalizedString(context)),
+                trailing: groupValue == ThemeMode.light ? const Icon(Icons.check) : null,
+                onTap: () => onChanged(ThemeMode.light),
               ),
-              RadioListTile(
+              ListTile(
                 contentPadding: EdgeInsets.zero,
-                value: ThemeMode.dark,
-                groupValue: groupValue,
-                onChanged: onChanged,
                 title: Text(ThemeMode.dark.toLocalizedString(context)),
+                trailing: groupValue == ThemeMode.dark ? const Icon(Icons.check) : null,
+                onTap: () => onChanged(ThemeMode.dark),
               ),
             ],
           );
@@ -186,17 +188,16 @@ class SettingsController extends State<SettingsPage> {
             width: 360,
             child: ListView(
               children: colors
-                  .map((color) => RadioListTile(
+                  .map((color) => ListTile(
                         contentPadding: EdgeInsets.zero,
-                        value: color,
-                        groupValue: groupValue,
-                        onChanged: onChanged,
                         title: color == null
                             ? Text(L10n.of(context)!.system)
                             : Align(
                                 alignment: Alignment.centerLeft,
                                 child: Icon(Icons.circle, color: color),
                               ),
+                        trailing: groupValue == color ? const Icon(Icons.check) : null,
+                        onTap: () => onChanged(color),
                       ))
                   .toList(),
             ),

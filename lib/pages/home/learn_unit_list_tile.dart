@@ -13,8 +13,8 @@ class LeanUnitListTile extends StatelessWidget {
     required this.symbol,
     required this.onTap,
     required this.onSettings,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

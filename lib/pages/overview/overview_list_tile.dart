@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:fun_with_kanji/l10n/l10n.dart';
 
 import 'package:fun_with_kanji/utils/writing_system.dart';
 
@@ -13,8 +13,8 @@ class OverviewListTile extends StatelessWidget {
     required this.title,
     required this.onTap,
     required this.writingSystem,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

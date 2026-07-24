@@ -117,6 +117,7 @@ class FunWithKanji {
     WritingSystem system,
     int id,
     int stars,
+    {int? quality}
   ) =>
       isar.writeTxn(() async {
         final progress = await isar.learningProgress
@@ -129,7 +130,11 @@ class FunWithKanji {
           ..characterId = id
           ..writingSystem = system.name;
         progress.stars = stars;
-        progress.lastCheckedAt = DateTime.now();
+        if (quality != null) {
+          progress.processSm2Review(quality);
+        } else {
+          progress.lastCheckedAt = DateTime.now();
+        }
         await isar.learningProgress.put(progress);
       });
 

@@ -13,8 +13,8 @@ class ConfigToggle extends StatefulWidget {
     required this.title,
     required this.icon,
     this.defaultValue = true,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<ConfigToggle> createState() => _ConfigToggleState();

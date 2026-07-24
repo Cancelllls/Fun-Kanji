@@ -5,7 +5,7 @@ import 'package:fun_with_kanji/models/script_loader.dart';
 
 class RadicalsViewer extends StatelessWidget {
   final int level;
-  const RadicalsViewer({required this.level, Key? key}) : super(key: key);
+  const RadicalsViewer({required this.level, super.key});
 
   @override
   Widget build(BuildContext context) {

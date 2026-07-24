@@ -1,20 +1,94 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:fun_with_kanji/l10n/l10n.dart';
+import 'package:fun_with_kanji/config/config_keys.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fun_with_kanji/models/fun_with_kanji.dart';
 import 'package:fun_with_kanji/pages/home/home_view.dart';
+import 'package:fun_with_kanji/pages/minigame/onyomi_kunyomi.dart';
+import 'package:fun_with_kanji/pages/reading/reading_practice.dart';
+import 'package:fun_with_kanji/pages/decks/decks.dart';
 import 'package:fun_with_kanji/pages/learning/learning.dart';
 import 'package:fun_with_kanji/utils/writing_system.dart';
+import 'package:home_widget/home_widget.dart';
+import 'package:fun_with_kanji/models/script_loader.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   HomePageController createState() => HomePageController();
 }
 
 class HomePageController extends State<HomePage> {
+  int currentStreak = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAndCheckStreak();
+  }
+
+  Future<void> _loadAndCheckStreak() async {
+    final prefs = await SharedPreferences.getInstance();
+    int streak = prefs.getInt(ConfigKeys.currentStreak) ?? 0;
+    String lastLoginStr = prefs.getString(ConfigKeys.lastLoginDate) ?? '';
+    
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);
+    
+    if (lastLoginStr.isNotEmpty) {
+      DateTime lastLogin = DateTime.parse(lastLoginStr);
+      DateTime lastLoginDate = DateTime(lastLogin.year, lastLogin.month, lastLogin.day);
+      
+      final difference = today.difference(lastLoginDate).inDays;
+      if (difference == 1) {
+        streak += 1;
+      } else if (difference > 1) {
+        streak = 1;
+      }
+    } else {
+      streak = 1;
+    }
+    
+    await prefs.setInt(ConfigKeys.currentStreak, streak);
+    await prefs.setString(ConfigKeys.lastLoginDate, today.toIso8601String());
+    
+    if (mounted) {
+      setState(() {
+        currentStreak = streak;
+      });
+    }
+    await _updateWidgetData(today);
+  }
+
+  Future<void> _updateWidgetData(DateTime today) async {
+    try {
+      final kanjis = await ScriptLoader.loadKanji(1, context);
+      if (kanjis.isNotEmpty) {
+        final dayOfYear = int.parse(today.difference(DateTime(today.year, 1, 1)).inDays.toString());
+        final dailyKanji = kanjis[dayOfYear % kanjis.length];
+        
+        await HomeWidget.saveWidgetData<String>('kanji', dailyKanji.kanji);
+        await HomeWidget.saveWidgetData<String>('meaning', dailyKanji.meanings.join(', '));
+        await HomeWidget.updateWidget(name: 'KanjiWidgetProvider');
+      }
+    } catch (_) {}
+  }
+
+  void launchMinigame() => Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const OnyomiKunyomiMinigame()),
+      );
+
+  void launchReadingPractice() => Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const ReadingPracticeScreen()),
+      );
+
+  void launchDecks() => Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const DecksScreen()),
+      );
+
   void learnSystem(WritingSystem writingSystem) => Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) => LearningPage(writingSystem: writingSystem),

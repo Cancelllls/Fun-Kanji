@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:fun_with_kanji/l10n/l10n.dart';
 
 import 'package:fun_with_kanji/models/kana.dart';
 import 'package:fun_with_kanji/models/script_loader.dart';
 
 class KatakanaViewer extends StatelessWidget {
-  const KatakanaViewer({Key? key}) : super(key: key);
+  const KatakanaViewer({super.key});
 
   @override
   Widget build(BuildContext context) {

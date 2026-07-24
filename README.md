@@ -1,12 +1,16 @@
-# Fun With Kanji
+# Fun Kanji
 
-Simple Flutter app to learn Japanese writing systems Hiragana, Katakana and Kanji.
+![Build & Test](https://github.com/krille-chan/fun-with-kanji/actions/workflows/build-and-test.yaml/badge.svg)
+![Lines of code](https://img.shields.io/tokei/lines/github/krille-chan/fun-with-kanji?color=blue&label=lines%20of%20code)
 
-With Fun With Kanji you are able to learn **all** common used Japanese characters. All starts with Hiragana, Katakana and their special cases and combinations. After this you learn the Kanji Radicals and then you are ready to start with the 2136 Jōyō-Kanji. You no longer need 4 different apps to learn them!
+With Fun Kanji you are able to learn **all** common used Japanese characters. All starts with Hiragana, Katakana and their special cases and combinations. After this you learn the Kanji Radicals and then you are ready to start with the 2136 Jōyō-Kanji. You no longer need 4 different apps to learn them!
 
-The app also contains a dictionary and a full-text search over all characters.
+**HUGE CREDIT AND THANKS** to the original author **krille-chan** and the contributors of **Fun With Kanji** for creating the amazing foundation of this app!
 
-Fun With Kanji is open source under Mozilla Public License 2.0. Contributions and new translations are always welcome <3.
+| <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="home" width="300" height="auto" />  | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" alt="home" width="300" height="auto" />  | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" alt="home" width="300" height="auto" />  |
+| ------------- |:-------------:|:-------------:|
+
+Fun Kanji is open source under Mozilla Public License 2.0. Contributions and new translations are always welcome <3.
 
 ## Screenshots:
 

@@ -4,4 +4,6 @@ abstract class ConfigKeys {
   static const String enterRomaji = 'enter_romaji';
   static const String enterKanjiKana = 'enter_kanji_kana';
   static const String learnWithSpacedRepition = 'learn_with_spaced_repition';
+  static const String currentStreak = 'current_streak';
+  static const String lastLoginDate = 'last_login_date';
 }

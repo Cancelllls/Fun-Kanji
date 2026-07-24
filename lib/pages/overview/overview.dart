@@ -17,7 +17,7 @@ import 'package:fun_with_kanji/pages/overview/radicals_viewer.dart';
 import 'package:fun_with_kanji/utils/writing_system.dart';
 
 class OverviewPage extends StatefulWidget {
-  const OverviewPage({Key? key}) : super(key: key);
+  const OverviewPage({super.key});
 
   @override
   OverviewController createState() => OverviewController();

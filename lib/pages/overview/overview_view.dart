@@ -1,23 +1,28 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:fun_with_kanji/l10n/l10n.dart';
 
 import 'package:fun_with_kanji/models/kanji.dart';
 import 'package:fun_with_kanji/pages/overview/kanji_list_tile.dart';
 import 'package:fun_with_kanji/pages/overview/overview.dart';
 import 'package:fun_with_kanji/pages/overview/overview_list_tile.dart';
 import 'package:fun_with_kanji/utils/writing_system.dart';
+import 'package:fun_with_kanji/widgets/dynamic_background.dart';
 
 class OverviewPageView extends StatelessWidget {
   final OverviewController controller;
-  const OverviewPageView(this.controller, {Key? key}) : super(key: key);
+  const OverviewPageView(this.controller, {super.key});
 
   @override
   Widget build(BuildContext context) {
     final searchResult = controller.searchResult;
-    return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 12,
+    return DynamicGradientBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          titleSpacing: 12,
         title: TextField(
           onChanged: controller.search,
           controller: controller.searchController,
@@ -66,6 +71,7 @@ class OverviewPageView extends StatelessWidget {
                       ))
                   .toList(),
             ),
+      ),
     );
   }
 }

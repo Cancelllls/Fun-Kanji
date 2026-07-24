@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:fun_with_kanji/l10n/l10n.dart';
 import 'package:isar/isar.dart';
 
 import 'package:fun_with_kanji/config/app_constants.dart';
@@ -12,7 +12,7 @@ import 'package:fun_with_kanji/widgets/theme_builder.dart';
 
 class FunWithKanjiApp extends StatelessWidget {
   final Isar isar;
-  const FunWithKanjiApp({required this.isar, Key? key}) : super(key: key);
+  const FunWithKanjiApp({required this.isar, super.key});
 
   @override
   Widget build(BuildContext context) => ThemeBuilder(

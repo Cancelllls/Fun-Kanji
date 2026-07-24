@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:fun_with_kanji/l10n/l10n.dart';
 
 import 'package:fun_with_kanji/config/app_constants.dart';
 import 'package:fun_with_kanji/config/config_keys.dart';
@@ -8,15 +8,22 @@ import 'package:fun_with_kanji/pages/settings/config_toggle.dart';
 import 'package:fun_with_kanji/pages/settings/settings.dart';
 import 'package:fun_with_kanji/utils/theme_mode_localization.dart';
 import 'package:fun_with_kanji/widgets/theme_builder.dart';
+import 'package:fun_with_kanji/widgets/dynamic_background.dart';
 
 class SettingsView extends StatelessWidget {
   final SettingsController controller;
-  const SettingsView(this.controller, {Key? key}) : super(key: key);
+  const SettingsView(this.controller, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(L10n.of(context)!.settings)),
+    return DynamicGradientBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: Text(L10n.of(context)!.settings),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
       body: ListView(
         children: [
           ListTile(
@@ -93,6 +100,7 @@ class SettingsView extends StatelessWidget {
             onTap: controller.displayAboutDialog,
           ),
         ],
+        ),
       ),
     );
   }
