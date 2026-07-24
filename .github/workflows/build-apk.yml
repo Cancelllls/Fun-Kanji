@@ -33,6 +33,9 @@ jobs:
           
       - name: Flutter Pub Get
         run: flutter pub get --no-example
+
+      - name: Patch Plugin Namespaces
+        run: python3 patch_namespaces.py
         
       - name: Build APK
         run: flutter build apk --release
