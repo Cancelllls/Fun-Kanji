@@ -1,1 +1,0 @@
-Simple app to learn Hiragana, Katakana and Kanji.
