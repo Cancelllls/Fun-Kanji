@@ -78,22 +78,42 @@ class HomePageController extends State<HomePage> {
   }
 
   void launchMinigame() => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const OnyomiKunyomiMinigame()),
+        _createRoute(const OnyomiKunyomiMinigame()),
       );
 
   void launchReadingPractice() => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const ReadingPracticeScreen()),
+        _createRoute(const ReadingPracticeScreen()),
       );
 
   void launchDecks() => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const DecksScreen()),
+        _createRoute(const DecksScreen()),
       );
 
   void learnSystem(WritingSystem writingSystem) => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => LearningPage(writingSystem: writingSystem),
-        ),
+        _createRoute(LearningPage(writingSystem: writingSystem)),
       );
+
+  Route _createRoute(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.0, 0.08),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOut,
+            )),
+            child: child,
+          ),
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 300),
+    );
+  }
 
   void writingSystemSettings(WritingSystem writingSystem) async {
     final action = await showDialog<WritingSystemSettingsAction?>(

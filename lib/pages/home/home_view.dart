@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:fun_with_kanji/config/app_colors.dart';
 import 'package:fun_with_kanji/config/app_constants.dart';
 import 'package:fun_with_kanji/models/fun_with_kanji.dart';
+import 'package:fun_with_kanji/models/script_loader.dart';
 import 'package:fun_with_kanji/pages/home/home.dart';
 import 'package:fun_with_kanji/pages/home/learn_unit_list_tile.dart';
 import 'package:fun_with_kanji/utils/writing_system.dart';
 import 'package:fun_with_kanji/widgets/dynamic_background.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomePageView extends StatelessWidget {
   final HomePageController controller;
@@ -59,8 +61,12 @@ class HomePageView extends StatelessWidget {
         body: StreamBuilder<void>(
             stream: FunWithKanji.of(context).onChanges,
             builder: (context, snapshot) => ListView(
-                  padding: const EdgeInsets.all(32),
+                  padding: const EdgeInsets.all(24),
                   children: [
+                    _buildOverallProgress(context, scheme),
+                    const SizedBox(height: 12),
+                    _buildKanjiOfDay(context, scheme),
+                    const SizedBox(height: 12),
                     _FeatureButton(
                       icon: Icons.gamepad,
                       label: 'Onyomi vs Kunyomi Minigame',
@@ -116,6 +122,173 @@ class HomePageView extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildOverallProgress(BuildContext context, ColorScheme scheme) {
+    return FutureBuilder<Map<String, int>>(
+      future: _loadOverallStats(context),
+      builder: (context, snapshot) {
+        final stats = snapshot.data;
+        if (stats == null) return const SizedBox.shrink();
+        final totalChars = stats['total'] ?? 1;
+        final finished = stats['finished'] ?? 0;
+        final pct = (finished / totalChars * 100).round();
+
+        return Card(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.auto_awesome,
+                        color: AppColors.starColor, size: 24),
+                    const SizedBox(width: 8),
+                    Text('Overall Progress',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: scheme.onSurface,
+                        )),
+                    const Spacer(),
+                    Text('$pct%',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: scheme.primary,
+                        )),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: LinearProgressIndicator(
+                    value: finished / (totalChars > 0 ? totalChars : 1),
+                    minHeight: 8,
+                    backgroundColor: scheme.surfaceContainerHighest,
+                    color: AppColors.tertiary,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '$finished of $totalChars characters mastered',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<Map<String, int>> _loadOverallStats(BuildContext context) async {
+    try {
+      int finished = 0;
+      int total = 0;
+      for (final system in WritingSystem.values) {
+        total += system.entries;
+        finished +=
+            await FunWithKanji.of(context).getFinishedCount(system);
+      }
+      return {'finished': finished, 'total': total};
+    } catch (_) {
+      return {'finished': 0, 'total': 1};
+    }
+  }
+
+  Widget _buildKanjiOfDay(BuildContext context, ColorScheme scheme) {
+    return FutureBuilder<DailyKanji?>(
+      future: _loadKanjiOfDay(context),
+      builder: (context, snapshot) {
+        final daily = snapshot.data;
+        if (daily == null) return const SizedBox.shrink();
+
+        return Card(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: null,
+              child: Row(
+                children: [
+                  Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      color: scheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      daily.kanji,
+                      style: GoogleFonts.yujiSyuku(
+                        textStyle: TextStyle(
+                          fontSize: 36,
+                          color: scheme.onPrimaryContainer,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.today,
+                                size: 16, color: scheme.primary),
+                            const SizedBox(width: 4),
+                            Text('Kanji of the Day',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: scheme.primary,
+                                )),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          daily.meaning,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: scheme.onSurface,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<DailyKanji?> _loadKanjiOfDay(BuildContext context) async {
+    try {
+      final kanjis = await ScriptLoader.loadKanji(1, context);
+      if (kanjis.isEmpty) return null;
+      final now = DateTime.now();
+      final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
+      final kanji = kanjis[dayOfYear % kanjis.length];
+      return DailyKanji(kanji.kanji, kanji.meanings.join(', '));
+    } catch (_) {
+      return null;
+    }
+  }
+}
+
+class DailyKanji {
+  final String kanji;
+  final String meaning;
+  const DailyKanji(this.kanji, this.meaning);
 }
 
 class _FeatureButton extends StatelessWidget {

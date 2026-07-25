@@ -30,6 +30,11 @@ class LearningView extends StatelessWidget {
           const SizedBox(width: 4),
           const Icon(Icons.check_circle_outlined),
           const SizedBox(width: 4),
+          IconButton(
+            icon: const Icon(Icons.skip_next),
+            tooltip: 'Skip',
+            onPressed: controller.skipCharacter,
+          ),
         ],
       ),
       body: Stack(

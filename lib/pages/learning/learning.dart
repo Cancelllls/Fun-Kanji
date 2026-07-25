@@ -255,6 +255,11 @@ class LearningController extends State<LearningPage> {
         correctAnswer.contains(answer.description.trim().toLowerCase()));
   }
 
+  void skipCharacter() {
+    if (answerCorrect != null) return;
+    _loadNextCharacter();
+  }
+
   AudioPlayer? _audioPlayer;
 
   void _check(bool isCorrect) async {
