@@ -70,28 +70,28 @@ class HomePageView extends StatelessWidget {
                     const SizedBox(height: 12),
                     _buildKanjiOfDay(context, scheme),
                     const SizedBox(height: 12),
-                    _FeatureButton(
+                    _FeatureCard(
                       icon: Icons.gamepad,
                       label: 'Onyomi vs Kunyomi Minigame',
-                      backgroundColor: scheme.primaryContainer,
-                      foregroundColor: scheme.onPrimaryContainer,
-                      onPressed: controller.launchMinigame,
+                      color: scheme.primary,
+                      containerColor: scheme.primaryContainer,
+                      onTap: controller.launchMinigame,
                     ),
                     const SizedBox(height: 12),
-                    _FeatureButton(
+                    _FeatureCard(
                       icon: Icons.menu_book,
                       label: 'Interactive Reading Practice',
-                      backgroundColor: scheme.tertiaryContainer,
-                      foregroundColor: scheme.onTertiaryContainer,
-                      onPressed: controller.launchReadingPractice,
+                      color: scheme.tertiary,
+                      containerColor: scheme.tertiaryContainer,
+                      onTap: controller.launchReadingPractice,
                     ),
                     const SizedBox(height: 12),
-                    _FeatureButton(
+                    _FeatureCard(
                       icon: Icons.style,
                       label: 'Custom Study Decks',
-                      backgroundColor: scheme.secondaryContainer,
-                      foregroundColor: scheme.onSecondaryContainer,
-                      onPressed: controller.launchDecks,
+                      color: scheme.secondary,
+                      containerColor: scheme.secondaryContainer,
+                      onTap: controller.launchDecks,
                     ),
                     const SizedBox(height: 16),
                     ...WritingSystem.values
@@ -295,21 +295,12 @@ class HomePageView extends StatelessWidget {
           return const SizedBox.shrink();
         }
         final system = snapshot.data!;
-        return ElevatedButton.icon(
-          icon: const Icon(Icons.play_circle_fill, size: 22),
-          label: Text('Continue ${system.getTitle(context)}'),
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-            backgroundColor: scheme.primary.withValues(alpha: 0.12),
-            foregroundColor: scheme.primary,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: scheme.primary.withValues(alpha: 0.3)),
-            ),
-          ),
-          onPressed: () => controller.learnSystem(system),
+        return _FeatureCard(
+          icon: Icons.play_circle_fill,
+          label: 'Continue ${system.getTitle(context)}',
+          color: scheme.primary,
+          containerColor: scheme.primaryContainer,
+          onTap: () => controller.learnSystem(system),
         );
       },
     );
@@ -333,37 +324,55 @@ class DailyKanji {
   const DailyKanji(this.kanji, this.meaning);
 }
 
-class _FeatureButton extends StatelessWidget {
+class _FeatureCard extends StatelessWidget {
   final IconData icon;
   final String label;
-  final Color backgroundColor;
-  final Color foregroundColor;
-  final VoidCallback onPressed;
+  final Color color;
+  final Color containerColor;
+  final VoidCallback onTap;
 
-  const _FeatureButton({
+  const _FeatureCard({
     required this.icon,
     required this.label,
-    required this.backgroundColor,
-    required this.foregroundColor,
-    required this.onPressed,
+    required this.color,
+    required this.containerColor,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      icon: Icon(icon),
-      label: Text(label),
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        textStyle: const TextStyle(fontSize: 18),
-        backgroundColor: backgroundColor,
-        foregroundColor: foregroundColor,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+    final scheme = Theme.of(context).colorScheme;
+
+    return Card(
+      clipBehavior: Clip.hardEdge,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 28,
+                backgroundColor: containerColor,
+                child: Icon(icon, color: color, size: 28),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: scheme.onSurface,
+                  ),
+                ),
+              ),
+              Icon(Icons.arrow_right_outlined, color: scheme.onSurfaceVariant),
+            ],
+          ),
         ),
       ),
-      onPressed: onPressed,
     );
   }
 }

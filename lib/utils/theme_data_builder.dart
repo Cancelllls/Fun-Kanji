@@ -50,14 +50,20 @@ ThemeData buildTheme(ColorScheme? scheme, Color? primaryColor, bool isLight) {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(
-          color: effectiveScheme.outlineVariant.withValues(alpha: 0.5),
+          color: effectiveScheme.outlineVariant.withValues(
+            alpha: isLight ? 0.5 : 0.7,
+          ),
         ),
       ),
-      color: effectiveScheme.surfaceContainerHighest.withValues(alpha: 0.8),
+      color: effectiveScheme.surfaceContainerHighest.withValues(
+        alpha: isLight ? 0.8 : 0.92,
+      ),
     ),
     navigationBarTheme: NavigationBarThemeData(
       elevation: 0,
-      backgroundColor: effectiveScheme.surface.withValues(alpha: 0.9),
+      backgroundColor: effectiveScheme.surface.withValues(
+        alpha: isLight ? 0.9 : 0.95,
+      ),
       indicatorColor: effectiveScheme.primaryContainer,
       surfaceTintColor: Colors.transparent,
     ),
@@ -79,7 +85,7 @@ ThemeData buildTheme(ColorScheme? scheme, Color? primaryColor, bool isLight) {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: effectiveScheme.primary,
-        side: BorderSide(color: effectiveScheme.outline),
+        side: BorderSide(color: effectiveScheme.outline, width: isLight ? 1.0 : 1.2),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -88,7 +94,9 @@ ThemeData buildTheme(ColorScheme? scheme, Color? primaryColor, bool isLight) {
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: effectiveScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+      fillColor: effectiveScheme.surfaceContainerHighest.withValues(
+        alpha: isLight ? 0.5 : 0.7,
+      ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide(color: effectiveScheme.outlineVariant),
