@@ -20,14 +20,14 @@ class Kanji extends JpCharacter {
   }) : super();
 
   factory Kanji.fromJson(Map<String, dynamic> json) => Kanji(
-        id: json['id'],
-        kanji: json['kanji'],
-        meanings: List<String>.from(json['meanings']),
-        readingsOn: List<String>.from(json['readings_on']),
-        readingsKun: List<String>.from(json['readings_kun']),
-        radicals: List<String>.from(json['radicals'] ?? []),
-        vocabs: ((json['vocabs'] ?? []) as List<Map<String, dynamic>>)
-            .map((json) => KanjiVocab.fromJson(json))
+        id: json['id'] as int,
+        kanji: json['kanji'] as String,
+        meanings: (json['meanings'] as List).cast<String>(),
+        readingsOn: (json['readings_on'] as List).cast<String>(),
+        readingsKun: (json['readings_kun'] as List).cast<String>(),
+        radicals: ((json['radicals'] ?? []) as List).cast<String>(),
+        vocabs: ((json['vocabs'] ?? []) as List)
+            .map((j) => KanjiVocab.fromJson(Map<String, dynamic>.from(j)))
             .toList(),
       );
 
