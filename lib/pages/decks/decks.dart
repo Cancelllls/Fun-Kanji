@@ -71,6 +71,7 @@ class _DecksScreenState extends State<DecksScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
+            tooltip: 'Create new deck',
             onPressed: _addDeck,
           )
         ],
@@ -85,7 +86,9 @@ class _DecksScreenState extends State<DecksScreen> {
                   title: Text(deck.name),
                   subtitle: Text('${deck.kanjiIds.length} Kanji'),
                   trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
+                    icon: Icon(Icons.delete,
+                        color: Theme.of(context).colorScheme.error),
+                    tooltip: 'Delete deck',
                     onPressed: () async {
                       await DeckManager.removeDeck(deck.id);
                       _loadDecks();

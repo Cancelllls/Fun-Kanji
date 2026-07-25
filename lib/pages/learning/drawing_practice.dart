@@ -15,12 +15,15 @@ class _DrawingPracticeScreenState extends State<DrawingPracticeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Practice: ${widget.kanji}'),
         actions: [
           IconButton(
             icon: const Icon(Icons.clear),
+            tooltip: 'Clear drawing',
             onPressed: () => setState(() {
               strokes.clear();
               currentStroke.clear();
@@ -32,7 +35,11 @@ class _DrawingPracticeScreenState extends State<DrawingPracticeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Trace or draw the Kanji below:', style: TextStyle(fontSize: 20)),
+            Text('Trace or draw the Kanji below:',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: scheme.onSurface,
+                )),
             const SizedBox(height: 20),
             Stack(
               alignment: Alignment.center,
@@ -42,7 +49,7 @@ class _DrawingPracticeScreenState extends State<DrawingPracticeScreen> {
                   style: GoogleFonts.yujiSyuku(
                     textStyle: TextStyle(
                       fontSize: 250,
-                      color: Colors.grey.withValues(alpha: 0.2),
+                      color: scheme.outlineVariant.withValues(alpha: 0.3),
                     ),
                   ),
                 ),
@@ -63,7 +70,7 @@ class _DrawingPracticeScreenState extends State<DrawingPracticeScreen> {
                   },
                   child: CustomPaint(
                     size: const Size(300, 300),
-                    painter: StrokePainter(strokes),
+                    painter: StrokePainter(strokes, scheme),
                   ),
                 ),
               ],
@@ -77,13 +84,14 @@ class _DrawingPracticeScreenState extends State<DrawingPracticeScreen> {
 
 class StrokePainter extends CustomPainter {
   final List<List<Offset>> strokes;
+  final ColorScheme scheme;
 
-  StrokePainter(this.strokes);
+  StrokePainter(this.strokes, this.scheme);
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.black
+      ..color = scheme.onSurface
       ..strokeWidth = 8.0
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round

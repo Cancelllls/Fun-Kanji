@@ -52,7 +52,8 @@ class SettingsController extends State<SettingsPage> {
             onPressed: () => Navigator.of(context).pop<bool>(true),
             child: Text(
               L10n.of(context)!.reset,
-              style: const TextStyle(color: Colors.red),
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.error),
             ),
           ),
         ],
@@ -176,12 +177,12 @@ class SettingsController extends State<SettingsPage> {
           const colors = [
             null,
             AppConstants.fallbackPrimaryColor,
-            Colors.blue,
-            Colors.green,
-            Colors.yellow,
-            Colors.red,
-            Colors.pink,
-            Colors.teal,
+            Color(0xFF1565C0),
+            Color(0xFF2E7D32),
+            Color(0xFFE65100),
+            Color(0xFFC62828),
+            Color(0xFFAD1457),
+            Color(0xFF00695C),
           ];
           return SizedBox(
             height: 360,

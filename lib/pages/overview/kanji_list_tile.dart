@@ -25,9 +25,13 @@ class KanjiListTile extends StatelessWidget {
           title: Center(
               child: CircleAvatar(
                   radius: 50,
+                  backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                  foregroundColor:
+                      Theme.of(context).colorScheme.onPrimaryContainer,
                   child: Text(
                     kanji.kanji,
-                    style: GoogleFonts.yujiSyuku(textStyle: const TextStyle(fontSize: 60)),
+                    style: GoogleFonts.yujiSyuku(
+                        textStyle: const TextStyle(fontSize: 60)),
                   ))),
           content: SizedBox(
             width: double.maxFinite,
@@ -54,7 +58,11 @@ class KanjiListTile extends StatelessWidget {
                   const Divider(),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    child: Text('Example Vocabulary:', style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor)),
+                    child: Text('Example Vocabulary:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        )),
                   ),
                   ...kanji.vocabs.map((vocab) => ListTile(
                     title: Text('${vocab.word} (${vocab.furigana})'),
@@ -131,13 +139,16 @@ class KanjiListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
+        color: scheme.surfaceContainerHighest.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: 0.3),
+        ),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
@@ -145,8 +156,8 @@ class KanjiListTile extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
           child: ListTile(
             leading: CircleAvatar(
-              foregroundColor: Theme.of(context).textTheme.bodyLarge?.color,
-              backgroundColor: Theme.of(context).secondaryHeaderColor.withValues(alpha: 0.5),
+              foregroundColor: scheme.onPrimaryContainer,
+              backgroundColor: scheme.primaryContainer,
               child: SizedBox(
                 width: 32,
                 height: 32,
@@ -156,9 +167,18 @@ class KanjiListTile extends StatelessWidget {
                 ),
               ),
             ),
-            title: Text(kanji.meanings.join(', '), style: const TextStyle(fontWeight: FontWeight.w600)),
-            subtitle: Text(subtitle ?? L10n.of(context)!.moreInfo),
-            trailing: Icon(moreIcon ?? Icons.arrow_right_outlined),
+            title: Text(kanji.meanings.join(', '),
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: scheme.onSurface,
+                )),
+            subtitle: subtitle != null
+                ? Text(subtitle!,
+                    style: TextStyle(color: scheme.onSurfaceVariant))
+                : Text(L10n.of(context)!.moreInfo,
+                    style: TextStyle(color: scheme.onSurfaceVariant)),
+            trailing: Icon(moreIcon ?? Icons.arrow_right_outlined,
+                color: scheme.onSurfaceVariant),
             onTap: () => showInfo(kanji, context),
           ),
         ),

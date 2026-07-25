@@ -23,15 +23,18 @@ class OverviewPageView extends StatelessWidget {
           backgroundColor: Colors.transparent,
           elevation: 0,
           titleSpacing: 12,
-        title: TextField(
-          onChanged: controller.search,
-          controller: controller.searchController,
-          decoration: InputDecoration(
-            filled: true,
-            hintText: L10n.of(context)!.search,
-            prefixIcon: controller.searchLoading
-                ? const CircularProgressIndicator.adaptive()
-                : const Icon(Icons.search_outlined),
+        title: Semantics(
+          label: L10n.of(context)!.search,
+          child: TextField(
+            onChanged: controller.search,
+            controller: controller.searchController,
+            decoration: InputDecoration(
+              filled: true,
+              hintText: L10n.of(context)!.search,
+              prefixIcon: controller.searchLoading
+                  ? const CircularProgressIndicator.adaptive()
+                  : const Icon(Icons.search_outlined),
+            ),
           ),
         ),
       ),
@@ -44,11 +47,10 @@ class OverviewPageView extends StatelessWidget {
                       subtitle: L10n.of(context)!.kanji,
                       moreIcon: Icons.info_outlined,
                     )
-                  : ListTile(
-                      leading: CircleAvatar(
-                        foregroundColor:
-                            Theme.of(context).textTheme.bodyLarge?.color,
-                        backgroundColor: Theme.of(context).secondaryHeaderColor,
+                    : ListTile(
+                        leading: CircleAvatar(
+                          foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                         child: SizedBox(
                           width: 32,
                           height: 32,

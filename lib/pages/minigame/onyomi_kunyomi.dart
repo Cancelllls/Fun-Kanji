@@ -81,13 +81,27 @@ class _OnyomiKunyomiMinigameState extends State<OnyomiKunyomiMinigame> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Onyomi vs Kunyomi'),
         actions: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Center(child: Text('Score: $_score', style: const TextStyle(fontSize: 18))),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: scheme.primaryContainer,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text('Score: $_score',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: scheme.onPrimaryContainer,
+                  )),
+            ),
           ),
         ],
       ),
@@ -101,14 +115,25 @@ class _OnyomiKunyomiMinigameState extends State<OnyomiKunyomiMinigame> {
                     children: [
                       Text(
                         _currentKanji!.kanji,
-                        style: const TextStyle(fontSize: 100),
+                        style: TextStyle(
+                          fontSize: 100,
+                          color: scheme.onSurface,
+                        ),
                       ),
                       const SizedBox(height: 20),
-                      const Text('Is this reading Onyomi or Kunyomi?', style: TextStyle(fontSize: 16)),
+                      Text('Is this reading Onyomi or Kunyomi?',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: scheme.onSurfaceVariant,
+                          )),
                       const SizedBox(height: 10),
                       Text(
                         _currentReading,
-                        style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                          color: scheme.onSurface,
+                        ),
                       ),
                       const SizedBox(height: 40),
                       Row(
@@ -116,19 +141,33 @@ class _OnyomiKunyomiMinigameState extends State<OnyomiKunyomiMinigame> {
                         children: [
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueAccent,
-                              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                              backgroundColor: scheme.primary,
+                              foregroundColor: scheme.onPrimary,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 40, vertical: 20),
+                              elevation: 0,
                             ),
-                            onPressed: _feedback == null ? () => _submitAnswer(true) : null,
-                            child: const Text('Onyomi (On)', style: TextStyle(color: Colors.white, fontSize: 18)),
+                            onPressed: _feedback == null
+                                ? () => _submitAnswer(true)
+                                : null,
+                            child: const Text('Onyomi (On)',
+                                style:
+                                    TextStyle(fontSize: 18)),
                           ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orangeAccent,
-                              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                              backgroundColor: scheme.tertiary,
+                              foregroundColor: scheme.onTertiary,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 40, vertical: 20),
+                              elevation: 0,
                             ),
-                            onPressed: _feedback == null ? () => _submitAnswer(false) : null,
-                            child: const Text('Kunyomi (Kun)', style: TextStyle(color: Colors.white, fontSize: 18)),
+                            onPressed: _feedback == null
+                                ? () => _submitAnswer(false)
+                                : null,
+                            child: const Text('Kunyomi (Kun)',
+                                style:
+                                    TextStyle(fontSize: 18)),
                           ),
                         ],
                       ),
@@ -139,7 +178,9 @@ class _OnyomiKunyomiMinigameState extends State<OnyomiKunyomiMinigame> {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: _feedback!.startsWith('Correct') ? Colors.green : Colors.red,
+                            color: _feedback!.startsWith('Correct')
+                                ? scheme.tertiary
+                                : scheme.error,
                           ),
                         ),
                     ],

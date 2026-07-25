@@ -276,7 +276,9 @@ class LearningController extends State<LearningPage> {
                             learningProgress!.waitingTime.inHours.toString())
                 : '-1',
             style: TextStyle(
-              color: isCorrect ? Colors.green : Colors.red,
+              color: isCorrect
+                  ? Theme.of(context).colorScheme.tertiary
+                  : Theme.of(context).colorScheme.error,
               fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
@@ -284,7 +286,9 @@ class LearningController extends State<LearningPage> {
           const SizedBox(width: 8),
           Icon(
             isCorrect ? Icons.star : Icons.star_outlined,
-            color: isCorrect ? Colors.green : Colors.blueGrey,
+            color: isCorrect
+                ? Theme.of(context).colorScheme.tertiary
+                : Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ],
       ),

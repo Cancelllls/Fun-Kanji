@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:fun_with_kanji/config/app_colors.dart';
+
 class LeanUnitListTile extends StatelessWidget {
   final int? progress;
   final String title;
@@ -18,14 +20,17 @@ class LeanUnitListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 32),
       child: Card(
         clipBehavior: Clip.hardEdge,
         child: InkWell(
           onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(20.0),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(
@@ -33,13 +38,14 @@ class LeanUnitListTile extends StatelessWidget {
                   Expanded(
                     child: Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
+                        color: scheme.onSurface,
                       ),
                     ),
                   ),
-                  const Icon(Icons.arrow_right_outlined),
+                  Icon(Icons.arrow_right_outlined, color: scheme.primary),
                 ],
               ),
               const SizedBox(height: 16),
@@ -48,6 +54,8 @@ class LeanUnitListTile extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 32,
+                    backgroundColor: scheme.primaryContainer,
+                    foregroundColor: scheme.onPrimaryContainer,
                     child: Text(
                       symbol,
                       style: const TextStyle(
@@ -58,19 +66,22 @@ class LeanUnitListTile extends StatelessWidget {
                   ),
                   const SizedBox(width: 16),
                   SizedBox(
-                    width: 64,
-                    height: 64,
+                    width: 72,
+                    height: 72,
                     child: Material(
-                      borderRadius: BorderRadius.circular(64),
-                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      borderRadius: BorderRadius.circular(72),
+                      color: scheme.secondaryContainer,
                       child: Stack(
                         children: [
                           SizedBox(
-                            width: 64,
-                            height: 64,
+                            width: 72,
+                            height: 72,
                             child: CircularProgressIndicator(
                               value: (progress ?? 0) / 100,
-                              color: Colors.green,
+                              strokeWidth: 5,
+                              color: AppColors.tertiary,
+                              backgroundColor:
+                                  scheme.surfaceContainerHighest,
                             ),
                           ),
                           if (progress != null)
@@ -78,9 +89,9 @@ class LeanUnitListTile extends StatelessWidget {
                                 child: Text(
                               '$progress%',
                               style: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSecondaryContainer,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                                color: scheme.onSecondaryContainer,
                               ),
                             )),
                         ],
@@ -93,8 +104,10 @@ class LeanUnitListTile extends StatelessWidget {
                     height: 64,
                     child: Material(
                       borderRadius: BorderRadius.circular(64),
+                      color: scheme.surfaceContainerHighest,
                       child: IconButton(
-                        icon: const Icon(Icons.settings_outlined),
+                        icon: Icon(Icons.settings_outlined,
+                            color: scheme.onSurfaceVariant),
                         onPressed: onSettings,
                       ),
                     ),

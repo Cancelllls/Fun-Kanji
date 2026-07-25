@@ -24,8 +24,8 @@ class RadicalsViewer extends StatelessWidget {
             itemCount: radicals.length,
             itemBuilder: (context, i) => ListTile(
               leading: CircleAvatar(
-                foregroundColor: Theme.of(context).textTheme.bodyLarge?.color,
-                backgroundColor: Theme.of(context).secondaryHeaderColor,
+                foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                 child: SizedBox(
                   width: 32,
                   height: 32,
