@@ -16,9 +16,12 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:fun_with_kanji/config/config_keys.dart';
 import 'package:fun_with_kanji/models/fun_with_kanji.dart';
 import 'package:fun_with_kanji/models/jp_character.dart';
+import 'package:fun_with_kanji/models/kana.dart';
+import 'package:fun_with_kanji/models/kanji.dart';
 import 'package:fun_with_kanji/models/learning_progress.dart';
 import 'package:fun_with_kanji/models/script_loader.dart';
 import 'package:fun_with_kanji/pages/learning/learning_view.dart';
+import 'package:fun_with_kanji/utils/achievement_manager.dart';
 import 'package:fun_with_kanji/utils/open_issue_dialog.dart';
 import 'package:fun_with_kanji/utils/writing_system.dart';
 
@@ -261,6 +264,38 @@ class LearningController extends State<LearningPage> {
     _loadNextCharacter();
   }
 
+  void _checkAchievements(bool isCorrect) async {
+    if (!isCorrect) return;
+    final stars = learningProgress!.stars;
+    final Set<Achievement> newAchievements = {};
+
+    if (currentCharacter is Kanji) {
+      newAchievements.add(Achievement.firstKanji);
+      if (stars == 10) newAchievements.add(Achievement.tenStarsOnOne);
+      final totalKanji =
+          await FunWithKanji.of(context).getFinishedCount(widget.writingSystem);
+      if (totalKanji >= 10) newAchievements.add(Achievement.tenKanji);
+      if (totalKanji >= 50) newAchievements.add(Achievement.fiftyKanji);
+      if (totalKanji >= 100) newAchievements.add(Achievement.hundredKanji);
+    } else if (currentCharacter is Kana) {
+      newAchievements.add(Achievement.firstKana);
+      final hiraganaFinished = await FunWithKanji.of(context)
+          .getFinishedCount(WritingSystem.hiragana);
+      final katakanaFinished = await FunWithKanji.of(context)
+          .getFinishedCount(WritingSystem.katakana);
+      if (hiraganaFinished >= WritingSystem.hiragana.entries &&
+          katakanaFinished >= WritingSystem.katakana.entries) {
+        newAchievements.add(Achievement.allKanaMastered);
+      }
+    } else {
+      newAchievements.add(Achievement.firstRadical);
+    }
+
+    if (newAchievements.isNotEmpty) {
+      await AchievementManager.checkAndShowNew(context, newAchievements);
+    }
+  }
+
   AudioPlayer? _audioPlayer;
 
   void _check(bool isCorrect) async {
@@ -317,7 +352,9 @@ class LearningController extends State<LearningPage> {
     setState(() {
       if (isCorrect && learningProgress!.stars < 10 && canLevelUp) {
         learningProgress!.stars++;
-        if (learningProgress!.stars == 10) {
+        if (learningProgress!.stars == 1 ||
+            learningProgress!.stars == 5 ||
+            learningProgress!.stars == 10) {
           confettiController.play();
         }
       } else if (!isCorrect && learningProgress!.stars > 0) {
@@ -326,7 +363,7 @@ class LearningController extends State<LearningPage> {
       answerCorrect = isCorrect;
     });
     if (canLevelUp || !isCorrect) {
-      int quality = isCorrect ? (started > 2 ? 3 : 5) : 0; // rough mapping for SM-2
+      int quality = isCorrect ? (started > 2 ? 3 : 5) : 0;
       await FunWithKanji.of(context).setLearningProgress(
         widget.writingSystem,
         _currentId,
@@ -334,6 +371,8 @@ class LearningController extends State<LearningPage> {
         quality: quality,
       );
     }
+
+    _checkAchievements(isCorrect);
 
     await Future.delayed(Duration(milliseconds: isCorrect ? 500 : 2000));
     if (mounted) _loadNextCharacter();

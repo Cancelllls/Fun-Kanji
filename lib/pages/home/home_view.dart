@@ -8,6 +8,7 @@ import 'package:fun_with_kanji/pages/home/home.dart';
 import 'package:fun_with_kanji/pages/home/learn_unit_list_tile.dart';
 import 'package:fun_with_kanji/utils/writing_system.dart';
 import 'package:fun_with_kanji/widgets/dynamic_background.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomePageView extends StatelessWidget {
@@ -64,6 +65,8 @@ class HomePageView extends StatelessWidget {
                   padding: const EdgeInsets.all(24),
                   children: [
                     _buildOverallProgress(context, scheme),
+                    const SizedBox(height: 12),
+                    _buildContinueLearning(context, scheme),
                     const SizedBox(height: 12),
                     _buildKanjiOfDay(context, scheme),
                     const SizedBox(height: 12),
@@ -279,6 +282,45 @@ class HomePageView extends StatelessWidget {
       final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
       final kanji = kanjis[dayOfYear % kanjis.length];
       return DailyKanji(kanji.kanji, kanji.meanings.join(', '));
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Widget _buildContinueLearning(BuildContext context, ColorScheme scheme) {
+    return FutureBuilder<WritingSystem?>(
+      future: _getLastStudiedSystem(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const SizedBox.shrink();
+        }
+        final system = snapshot.data!;
+        return ElevatedButton.icon(
+          icon: const Icon(Icons.play_circle_fill, size: 22),
+          label: Text('Continue ${system.getTitle(context)}'),
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            backgroundColor: scheme.primary.withValues(alpha: 0.12),
+            foregroundColor: scheme.primary,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: scheme.primary.withValues(alpha: 0.3)),
+            ),
+          ),
+          onPressed: () => controller.learnSystem(system),
+        );
+      },
+    );
+  }
+
+  Future<WritingSystem?> _getLastStudiedSystem() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString('last_studied_system');
+    if (name == null) return null;
+    try {
+      return WritingSystem.values.firstWhere((s) => s.name == name);
     } catch (_) {
       return null;
     }

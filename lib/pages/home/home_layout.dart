@@ -6,6 +6,7 @@ import 'package:fun_with_kanji/pages/home/home.dart';
 import 'package:fun_with_kanji/pages/info/info.dart';
 import 'package:fun_with_kanji/pages/overview/overview.dart';
 import 'package:fun_with_kanji/pages/settings/settings.dart';
+import 'package:fun_with_kanji/pages/stats/stats.dart';
 
 class HomeLayout extends StatefulWidget {
   const HomeLayout({super.key});
@@ -27,8 +28,10 @@ class HomeLayoutState extends State<HomeLayout> {
           case 1:
             return const OverviewPage();
           case 2:
-            return const InfoPage();
+            return const StatsPage();
           case 3:
+            return const InfoPage();
+          case 4:
           default:
             return const SettingsPage();
         }
@@ -46,6 +49,10 @@ class HomeLayoutState extends State<HomeLayout> {
           NavigationDestination(
             icon: const Icon(Icons.search_outlined),
             label: L10n.of(context)!.overview,
+          ),
+          const NavigationDestination(
+            icon: Icon(Icons.bar_chart_outlined),
+            label: 'Stats',
           ),
           NavigationDestination(
             icon: const Icon(Icons.info_outline),

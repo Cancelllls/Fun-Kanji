@@ -10,6 +10,7 @@ import 'package:fun_with_kanji/pages/minigame/onyomi_kunyomi.dart';
 import 'package:fun_with_kanji/pages/reading/reading_practice.dart';
 import 'package:fun_with_kanji/pages/decks/decks.dart';
 import 'package:fun_with_kanji/pages/learning/learning.dart';
+import 'package:fun_with_kanji/utils/achievement_manager.dart';
 import 'package:fun_with_kanji/utils/writing_system.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:fun_with_kanji/models/script_loader.dart';
@@ -60,6 +61,14 @@ class HomePageController extends State<HomePage> {
         currentStreak = streak;
       });
     }
+
+    final Set<Achievement> streakAchievements = {};
+    if (streak >= 5) streakAchievements.add(Achievement.fiveDayStreak);
+    if (streak >= 7) streakAchievements.add(Achievement.sevenDayStreak);
+    if (streakAchievements.isNotEmpty) {
+      await AchievementManager.checkAndShowNew(context, streakAchievements);
+    }
+
     await _updateWidgetData(today);
   }
 
@@ -89,9 +98,17 @@ class HomePageController extends State<HomePage> {
         _createRoute(const DecksScreen()),
       );
 
-  void learnSystem(WritingSystem writingSystem) => Navigator.of(context).push(
-        _createRoute(LearningPage(writingSystem: writingSystem)),
-      );
+  void learnSystem(WritingSystem writingSystem) {
+    _saveLastStudied(writingSystem);
+    Navigator.of(context).push(
+      _createRoute(LearningPage(writingSystem: writingSystem)),
+    );
+  }
+
+  void _saveLastStudied(WritingSystem system) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('last_studied_system', system.name);
+  }
 
   Route _createRoute(Widget page) {
     return PageRouteBuilder(

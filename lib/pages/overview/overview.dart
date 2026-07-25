@@ -94,6 +94,10 @@ class OverviewController extends State<OverviewPage> {
       searchResult = result;
       searchLoading = false;
     });
+
+    if (text.isNotEmpty && result.isNotEmpty) {
+      SearchHistory.add(text);
+    }
   }
 
   void cancelSearch() {
