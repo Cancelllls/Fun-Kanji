@@ -39,39 +39,45 @@ class OverviewPageView extends StatelessWidget {
         ),
       ),
       body: searchResult != null
-          ? ListView.builder(
-              itemCount: searchResult.length,
-              itemBuilder: (context, i) => searchResult[i] is Kanji
-                  ? KanjiListTile(
-                      kanji: searchResult[i] as Kanji,
-                      subtitle: L10n.of(context)!.kanji,
-                      moreIcon: Icons.info_outlined,
-                    )
+          ? RefreshIndicator(
+              onRefresh: () async => controller.search(controller.searchController.text),
+              child: ListView.builder(
+                itemCount: searchResult.length,
+                itemBuilder: (context, i) => searchResult[i] is Kanji
+                    ? KanjiListTile(
+                        kanji: searchResult[i] as Kanji,
+                        subtitle: L10n.of(context)!.kanji,
+                        moreIcon: Icons.info_outlined,
+                      )
                     : ListTile(
                         leading: CircleAvatar(
                           foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
                           backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                        child: SizedBox(
-                          width: 32,
-                          height: 32,
-                          child: FittedBox(
-                            fit: BoxFit.contain,
-                            child: Text(searchResult[i].toString()),
+                          child: SizedBox(
+                            width: 32,
+                            height: 32,
+                            child: FittedBox(
+                              fit: BoxFit.contain,
+                              child: Text(searchResult[i].toString()),
+                            ),
                           ),
                         ),
+                        title: Text(searchResult[i].description),
+                        subtitle: Text(searchResult[i].runtimeType.toString()),
                       ),
-                      title: Text(searchResult[i].description),
-                      subtitle: Text(searchResult[i].runtimeType.toString()),
-                    ),
+              ),
             )
-          : ListView(
-              children: WritingSystem.values
-                  .map((writingSystem) => OverviewListTile(
-                        onTap: () => controller.goToViewer(writingSystem),
-                        writingSystem: writingSystem,
-                        title: writingSystem.getTitle(context),
-                      ))
-                  .toList(),
+          : RefreshIndicator(
+              onRefresh: () async => controller.search(controller.searchController.text),
+              child: ListView(
+                children: WritingSystem.values
+                    .map((writingSystem) => OverviewListTile(
+                          onTap: () => controller.goToViewer(writingSystem),
+                          writingSystem: writingSystem,
+                          title: writingSystem.getTitle(context),
+                        ))
+                    .toList(),
+              ),
             ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -168,6 +169,7 @@ class _OnyomiKunyomiMinigameState extends State<OnyomiKunyomiMinigame>
   }
 
   void _submitAnswer(bool guessIsOnyomi) {
+    HapticFeedback.lightImpact();
     _isCorrect = guessIsOnyomi == _isOnyomi;
     if (_isCorrect) {
       _score++;

@@ -6,6 +6,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:fun_with_kanji/l10n/l10n.dart';
 import 'package:just_audio/just_audio.dart';
@@ -263,7 +264,7 @@ class LearningController extends State<LearningPage> {
   AudioPlayer? _audioPlayer;
 
   void _check(bool isCorrect) async {
-    // Display correct in text field:
+    HapticFeedback.lightImpact();
     responseController.text = currentCharacter!.correctAnswers.join('/');
 
     // Display feedback:

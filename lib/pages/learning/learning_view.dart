@@ -50,95 +50,103 @@ class LearningView extends StatelessWidget {
             final choices = controller.choices;
             return ListView(padding: const EdgeInsets.all(16), children: [
               Semantics(
-                label:
-                    'Progress: ${learningProgress.stars} out of 10 stars',
+                label: 'Progress: ${learningProgress.stars} out of 10 stars',
                 child: Row(
-                children: [
-                  for (var i = 1; i <= 10; i++)
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(
-                          learningProgress.stars >= i
-                              ? Icons.star
-                              : Icons.star_outlined,
-                          color: learningProgress.stars >= i
-                              ? AppColors.starColor
-                              : scheme.outlineVariant,
+                  children: [
+                    for (var i = 1; i <= 10; i++)
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(
+                            learningProgress.stars >= i
+                                ? Icons.star
+                                : Icons.star_outlined,
+                            color: learningProgress.stars >= i
+                                ? AppColors.starColor
+                                : scheme.outlineVariant,
+                          ),
                         ),
                       ),
-                    ),
-                ],
-              ),
+                  ],
+                ),
               ),
               const SizedBox(height: 16),
               Semantics(
-                label:
-                    'Character: ${currentCharacter.toString()}',
+                label: 'Character: ${currentCharacter.toString()}',
                 child: SizedBox(
-                height: 188,
-                child: Center(
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
-                    width: controller.answerCorrect == null ? 512 : 0,
-                    height: controller.answerCorrect == null ? 188 : 0,
-                    curve: Curves.easeInOut,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      image: const DecorationImage(
-                        image:
-                            AssetImage('assets/images/moe-3793863_1280.png'),
+                  height: 188,
+                  child: Center(
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 500),
+                      width: controller.answerCorrect == null ? 512 : 0,
+                      height: controller.answerCorrect == null ? 188 : 0,
+                      curve: Curves.easeInOut,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: controller.answerCorrect == null
+                            ? scheme.primaryContainer
+                            : controller.answerCorrect!
+                                ? scheme.tertiary
+                                : scheme.error,
                       ),
-                      color: controller.answerCorrect == null
-                          ? scheme.primaryContainer
-                          : controller.answerCorrect!
-                              ? scheme.tertiary
-                              : scheme.error,
-                    ),
-                    alignment: Alignment.bottomCenter,
-                    padding: const EdgeInsets.only(bottom: 32),
-                    child: controller.answerCorrect != null
-                        ? null
-                        : ConstrainedBox(
-                            constraints: const BoxConstraints(
-                              maxWidth: 128,
-                              maxHeight: 64,
-                            ),
-                            child: Material(
-                              color: scheme.surface,
-                              borderRadius: BorderRadius.circular(8),
-                              child: FittedBox(
-                                fit: BoxFit.fitHeight,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      currentCharacter is Kanji &&
-                                              controller.enterKanjiKana
-                                          ? currentCharacter.description
-                                          : currentCharacter.toString(),
-                                      style: GoogleFonts.yujiSyuku(
-                                        textStyle: TextStyle(
-                                          color: scheme.onSurface,
-                                          fontSize: 32,
+                      alignment: Alignment.bottomCenter,
+                      padding: const EdgeInsets.only(bottom: 32),
+                      child: controller.answerCorrect != null
+                          ? null
+                          : Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: CustomPaint(
+                                      painter: _CardPatternPainter(
+                                        color: scheme.primary
+                                            .withValues(alpha: 0.06),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Center(
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 128,
+                                      maxHeight: 64,
+                                    ),
+                                    child: Material(
+                                      color: scheme.surface,
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: FittedBox(
+                                        fit: BoxFit.fitHeight,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              currentCharacter is Kanji &&
+                                                      controller.enterKanjiKana
+                                                  ? currentCharacter.description
+                                                  : currentCharacter.toString(),
+                                              style: GoogleFonts.yujiSyuku(
+                                                textStyle: TextStyle(
+                                                  color: scheme.onSurface,
+                                                  fontSize: 32,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ),
+                    ),
                   ),
                 ),
               ),
-              ),
               if (currentCharacter is Kana) ...[
                 const SizedBox(height: 16),
-                Text(
-                  currentCharacter.type,
-                  textAlign: TextAlign.center,
-                ),
+                Text(currentCharacter.type, textAlign: TextAlign.center),
               ],
               if (currentCharacter is Kanji && controller.enterKanjiKana) ...[
                 const SizedBox(height: 16),
@@ -160,7 +168,23 @@ class LearningView extends StatelessWidget {
                   ),
                 ),
               ],
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
+              if (controller.answerCorrect == null)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton.icon(
+                      onPressed: () {
+                        controller.responseController.text =
+                            currentCharacter.correctAnswers.join(', ');
+                      },
+                      icon: const Icon(Icons.lightbulb_outline,
+                          size: 18, color: AppColors.starColor),
+                      label: const Text('Show Answer',
+                          style: TextStyle(color: AppColors.starColor)),
+                    ),
+                  ],
+                ),
               if (controller.showHint || controller.hint == null)
                 OutlinedButton(
                   onPressed: controller.editHint,
@@ -217,10 +241,10 @@ class LearningView extends StatelessWidget {
                   enableSuggestions: false,
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
-                      hintText:
-                          currentCharacter is Kanji && controller.enterKanjiKana
-                              ? L10n.of(context)!.enterKanji
-                              : L10n.of(context)!.enterRomaji),
+                      hintText: currentCharacter is Kanji &&
+                              controller.enterKanjiKana
+                          ? L10n.of(context)!.enterKanji
+                          : L10n.of(context)!.enterRomaji),
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
@@ -234,10 +258,8 @@ class LearningView extends StatelessWidget {
                   (controller.learningProgress!.stars < 8 ||
                       controller.answerCorrect != null)) ...[
                 const Divider(),
-                Text(
-                  currentCharacter.reading,
-                  style: const TextStyle(fontSize: 16),
-                ),
+                Text(currentCharacter.reading,
+                    style: const TextStyle(fontSize: 16)),
               ],
               if (currentCharacter is Kanji &&
                   (controller.learningProgress!.stars < 8 ||
@@ -277,4 +299,39 @@ class LearningView extends StatelessWidget {
       ),
     );
   }
+}
+
+class _CardPatternPainter extends CustomPainter {
+  final Color color;
+  _CardPatternPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+
+    const spacing = 28.0;
+    const radius = 6.0;
+
+    for (double x = spacing; x < size.width; x += spacing) {
+      for (double y = spacing; y < size.height; y += spacing) {
+        final alpha = ((x / spacing + y / spacing) % 2 == 0) ? 1.0 : 0.4;
+        paint.color = color.withValues(alpha: alpha);
+        canvas.drawCircle(Offset(x, y), radius, paint);
+      }
+    }
+
+    for (double x = spacing / 2; x < size.width; x += spacing) {
+      for (double y = spacing / 2; y < size.height; y += spacing) {
+        paint.color = color.withValues(alpha: 0.2);
+        canvas.drawLine(
+            Offset(x - 4, y - 4), Offset(x + 4, y + 4), paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
