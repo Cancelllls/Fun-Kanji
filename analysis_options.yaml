@@ -21,3 +21,8 @@ analyzer:
     - lib/*/*.g.dart
     - build/**
     - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
