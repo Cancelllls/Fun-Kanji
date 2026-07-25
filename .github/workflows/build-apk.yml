@@ -14,37 +14,43 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        
+
       - name: Load Version Envs
         run: cat .github/workflows/versions.env >> $GITHUB_ENV
-        
+
+      - name: Read App Version
+        id: version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr -d ' ')
+          echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: ${{ env.JAVA_VERSION }}
-          
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-          
+
       - name: Flutter Pub Get
         run: flutter pub get --no-example
 
       - name: Patch Plugin Namespaces
         run: python3 patch_namespaces.py
-        
+
       - name: Build Global APK
         run: flutter build apk --release
-        
+
       - name: Build Split APKs
         run: flutter build apk --release --split-per-abi
-        
+
       - name: Upload APK Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -56,9 +62,10 @@ jobs:
             build/app/outputs/flutter-apk/app-x86_64-release.apk
 
       - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: v${{ env.APP_VERSION }}
+          name: v${{ env.APP_VERSION }}
           files: |
             build/app/outputs/flutter-apk/app-release.apk
             build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
