@@ -7,7 +7,9 @@ import 'package:fun_with_kanji/models/script_loader.dart';
 import 'package:fun_with_kanji/pages/home/home.dart';
 import 'package:fun_with_kanji/pages/home/learn_unit_list_tile.dart';
 import 'package:fun_with_kanji/utils/writing_system.dart';
+import 'package:fun_with_kanji/pages/learning/drawing_practice.dart';
 import 'package:fun_with_kanji/widgets/dynamic_background.dart';
+import 'package:fun_with_kanji/widgets/m3_expressive_motion.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -209,12 +211,17 @@ class HomePageView extends StatelessWidget {
         final daily = snapshot.data;
         if (daily == null) return const SizedBox.shrink();
 
-        return Card(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(16),
-              onTap: null,
+        return M3SpringPressable(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => DrawingPracticeScreen(kanji: daily.kanji),
+              ),
+            );
+          },
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
               child: Row(
                 children: [
                   Container(
@@ -223,6 +230,10 @@ class HomePageView extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: scheme.primaryContainer,
                       borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: const Color(0xFFE5C158).withValues(alpha: 0.5),
+                        width: 1.5,
+                      ),
                     ),
                     alignment: Alignment.center,
                     child: Text(
@@ -242,14 +253,14 @@ class HomePageView extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.today,
-                                size: 16, color: scheme.primary),
+                            const Icon(Icons.today,
+                                size: 16, color: Color(0xFFEC4899)),
                             const SizedBox(width: 4),
-                            Text('Kanji of the Day',
+                            const Text('Kanji of the Day',
                                 style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: scheme.primary,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFFEC4899),
                                 )),
                           ],
                         ),
@@ -258,13 +269,22 @@ class HomePageView extends StatelessWidget {
                           daily.meaning,
                           style: TextStyle(
                             fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Tap to practice drawing ✍️',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: scheme.onSurfaceVariant,
                           ),
                         ),
                       ],
                     ),
                   ),
+                  Icon(Icons.edit_note, color: scheme.primary),
                 ],
               ),
             ),
@@ -343,11 +363,11 @@ class _FeatureCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    return Card(
-      clipBehavior: Clip.hardEdge,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
+    return M3SpringPressable(
+      onTap: onTap,
+      child: Card(
+        clipBehavior: Clip.hardEdge,
+        elevation: 1,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
@@ -363,12 +383,12 @@ class _FeatureCard extends StatelessWidget {
                   label,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 18,
+                    fontSize: 17,
                     color: scheme.onSurface,
                   ),
                 ),
               ),
-              Icon(Icons.arrow_right_outlined, color: scheme.onSurfaceVariant),
+              Icon(Icons.chevron_right, color: scheme.onSurfaceVariant),
             ],
           ),
         ),

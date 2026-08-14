@@ -1,87 +1,147 @@
-name: Build APK
+name: Fun Kanji Release Build
 
 on:
   workflow_dispatch:
   push:
     branches:
       - main
-    tags:
-      - 'v*'
+    paths-ignore:
+      - 'releases/**'
+      - 'README.md'
 
 jobs:
-  build-apk:
-    name: Build Android APK
+  # ── Auto-Bump Version ────────────────────────────────────────────────
+  bump:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-      - name: Load Version Envs
-        run: cat .github/workflows/versions.env >> $GITHUB_ENV
-
-      - name: Read App Version
-        id: version
+      - name: Bump Patch Version
+        id: bump
         run: |
-          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr -d ' ')
-          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-          echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
-          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
+          OLD_NEW=$(python3 tools/bump_version.py)
+          OLD=$(echo "$OLD_NEW" | awk '{print $1}')
+          NEW=$(echo "$OLD_NEW" | awk '{print $2}')
+          echo "old=$OLD" >> $GITHUB_OUTPUT
+          echo "version=$NEW" >> $GITHUB_OUTPUT
+          echo "Bumped: $OLD → $NEW"
 
-      - name: Set Release Tag
-        id: tag
-        run: |
-          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            TAG_NAME="${{ github.ref_name }}"
-          else
-            TAG_NAME="v${{ env.APP_VERSION }}-${{ env.SHORT_SHA }}"
-          fi
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-          echo "Release tag: $TAG_NAME"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add lib/version.dart pubspec.yaml
+          git commit -m "chore: bump version to v${NEW} [skip ci]" || exit 0
+          git push origin main
 
-      - name: Setup Java
+  # ── Build Release APKs ────────────────────────────────────────────────
+  build:
+    needs: bump
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: '17'
 
-      - name: Setup Flutter
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
 
-      - name: Flutter Pub Get
-        run: flutter pub get --no-example
+      - name: Set up signing (if key present)
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > android/upload-keystore.jks
+            cat > android/key.properties << EOF
+          storePassword=${STORE_PASSWORD}
+          keyPassword=${KEY_PASSWORD}
+          keyAlias=${KEY_ALIAS}
+          storeFile=upload-keystore.jks
+          EOF
+          fi
 
-      - name: Patch Plugin Namespaces
-        run: python3 patch_namespaces.py
+      - name: Install dependencies
+        run: flutter pub get
 
-      - name: Build Global APK
-        run: flutter build apk --release
+      - name: Build Split APKs & Universal APK
+        run: |
+          flutter build apk --release --split-per-abi
+          flutter build apk --release
 
-      - name: Build Split APKs
-        run: flutter build apk --release --split-per-abi
+      - name: Rename APKs for Release
+        run: |
+          VER="${{ needs.bump.outputs.version }}"
+          mkdir -p release_apks
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk release_apks/FunKanji-v${VER}-arm64-v8a.apk
+          cp build/app/outputs/flutter-apk/app-x86_64-release.apk release_apks/FunKanji-v${VER}-x86_64.apk
+          cp build/app/outputs/flutter-apk/app-release.apk release_apks/FunKanji-v${VER}-universal.apk
 
       - name: Upload APK Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: app-releases
-          path: |
-            build/app/outputs/flutter-apk/app-release.apk
-            build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
-            build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
-            build/app/outputs/flutter-apk/app-x86_64-release.apk
+          name: fun-kanji-apks
+          path: release_apks/
 
-      - name: Create GitHub Release
+  # ── GitHub Release ───────────────────────────────────────────────────
+  release:
+    needs: [bump, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
+          fetch-depth: 0
+
+      - name: Set Version
+        id: version
+        run: |
+          VER="${{ needs.bump.outputs.version }}"
+          echo "tag=v${VER}" >> $GITHUB_OUTPUT
+          echo "display=${VER}" >> $GITHUB_OUTPUT
+
+      - name: Download APK Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: fun-kanji-apks
+          path: apks/
+
+      - name: Generate Changelog
+        id: changelog
+        run: |
+          CHANGELOG=$(python3 tools/gen_changelog.py "${{ steps.version.outputs.display }}")
+          echo "$CHANGELOG" > /tmp/changelog.md
+
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ env.TAG_NAME }}
-          name: ${{ env.TAG_NAME }}
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Release v${{ steps.version.outputs.display }}
+          body_path: /tmp/changelog.md
           files: |
-            build/app/outputs/flutter-apk/app-release.apk
-            build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
-            build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
-            build/app/outputs/flutter-apk/app-x86_64-release.apk
-          generate_release_notes: true
+            apks/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

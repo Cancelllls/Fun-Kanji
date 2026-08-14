@@ -32,8 +32,23 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
         allKanji.addAll(await ScriptLoader.loadKanji(i, context));
       } catch (_) {}
     }
-    _deckKanjis =
-        allKanji.where((k) => widget.deck.kanjiIds.contains(k.kanji)).toList();
+    for (int n = 1; n <= 5; n++) {
+      try {
+        allKanji.addAll(await ScriptLoader.loadAllJlptLevel(n));
+      } catch (_) {}
+    }
+    
+    // Deduplicate by kanji character
+    final Map<String, Kanji> uniqueMap = {};
+    for (var k in allKanji) {
+      uniqueMap[k.kanji] = k;
+    }
+
+    _deckKanjis = widget.deck.kanjiIds
+        .where((id) => uniqueMap.containsKey(id))
+        .map((id) => uniqueMap[id]!)
+        .toList();
+        
     if (mounted) setState(() => _loading = false);
   }
 

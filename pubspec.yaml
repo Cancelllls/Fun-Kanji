@@ -1,5 +1,5 @@
-name: fun_with_kanji
-description: Simple Flutter app to learn Japanese writing systems Hiragana, Katakana and Kanji.
+name: fun_kanji
+description: Fun Kanji - Modern Japanese Kanji Learning App
 publish_to: "none"
 version: 1.0.0+27
 
