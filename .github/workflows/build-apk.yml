@@ -37,6 +37,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add lib/version.dart pubspec.yaml
           git commit -m "chore: bump version to v${NEW} [skip ci]" || exit 0
+          git pull --rebase origin main
           git push origin main
 
   # ── Build Release APKs ────────────────────────────────────────────────
