@@ -123,7 +123,7 @@ class _KanaPracticeScreenState extends State<KanaPracticeScreen> with SingleTick
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  kana.romaji,
+                  kana.roumaji,
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
