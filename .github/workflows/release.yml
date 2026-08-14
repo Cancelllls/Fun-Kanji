@@ -2,12 +2,13 @@ name: Fun Kanji Release Build
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - 'releases/**'
-      - 'README.md'
+  # push disabled to prevent double runs on git push / workflow_dispatch
+  # push:
+  #   branches:
+  #     - main
+  #   paths-ignore:
+  #     - 'releases/**'
+  #     - 'README.md'
 
 jobs:
   # ── Auto-Bump Version ────────────────────────────────────────────────
