@@ -210,12 +210,13 @@ class _SrsReviewScreenState extends State<SrsReviewScreen> {
                   _showAnswer = !_showAnswer;
                 });
               },
-              child: M3FloatingCard(
+              child: SizedBox(
                 width: double.infinity,
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                child: M3FloatingCard(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                     Text(
                       currentItem.kanji,
                       style: GoogleFonts.yujiSyuku(
@@ -268,6 +269,7 @@ class _SrsReviewScreenState extends State<SrsReviewScreen> {
                 ),
               ),
             ),
+          ),
           ),
           const SizedBox(height: 20),
 

@@ -211,24 +211,26 @@ class _JlptExamScreenState extends State<JlptExamScreen> {
                     const SizedBox(height: 24),
 
                     // Kanji Question Card
-                    M3FloatingCard(
+                    SizedBox(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        children: [
-                          Text(
-                            _questions[_currentIndex].kanji.kanji,
-                            style: GoogleFonts.yujiSyuku(
-                              fontSize: 100,
-                              fontWeight: FontWeight.bold,
+                      child: M3FloatingCard(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          children: [
+                            Text(
+                              _questions[_currentIndex].kanji.kanji,
+                              style: GoogleFonts.yujiSyuku(
+                                fontSize: 100,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            _questions[_currentIndex].questionText,
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ],
+                            const SizedBox(height: 10),
+                            Text(
+                              _questions[_currentIndex].questionText,
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),

@@ -131,7 +131,7 @@ class SrsManager {
         stage: nextStage,
         nextReview: now.add(Duration(hours: delayHours)),
         streak: nextStreak,
-      ));
+      );
     }
 
     await saveAllItems(items);
