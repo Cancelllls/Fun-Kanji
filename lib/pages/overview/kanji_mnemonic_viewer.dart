@@ -87,7 +87,7 @@ class KanjiMnemonicViewerScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         height: 1.5,
-                        color: isDark ? Colors.white80 : Colors.black87,
+                        color: isDark ? Colors.white70 : Colors.black87,
                       ),
                     ),
                   ],
