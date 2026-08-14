@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'l10n_de.dart';
 import 'l10n_en.dart';
 
 // ignore_for_file: type=lint
@@ -92,10 +91,7 @@ abstract class L10n {
   ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[
-    Locale('en'),
-    Locale('de')
-  ];
+  static const List<Locale> supportedLocales = <Locale>[Locale('en')];
 
   /// No description provided for @learn.
   ///
@@ -468,7 +464,7 @@ class _L10nDelegate extends LocalizationsDelegate<L10n> {
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['de', 'en'].contains(locale.languageCode);
+      <String>['en'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_L10nDelegate old) => false;
@@ -477,8 +473,6 @@ class _L10nDelegate extends LocalizationsDelegate<L10n> {
 L10n lookupL10n(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'de':
-      return L10nDe();
     case 'en':
       return L10nEn();
   }
