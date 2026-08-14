@@ -2,57 +2,31 @@ name: Fun Kanji Release Build
 
 on:
   workflow_dispatch:
-  # push disabled to prevent double runs on git push / workflow_dispatch
   # push:
   #   branches:
   #     - main
-  #   paths-ignore:
-  #     - 'releases/**'
-  #     - 'README.md'
 
 jobs:
-  # ── Auto-Bump Version ────────────────────────────────────────────────
-  bump:
+  # ── 1. Build Release APKs ─────────────────────────────────────────────
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     outputs:
-      version: ${{ steps.bump.outputs.version }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
-
-      - name: Bump Patch Version
-        id: bump
-        run: |
-          OLD_NEW=$(python3 tools/bump_version.py)
-          OLD=$(echo "$OLD_NEW" | awk '{print $1}')
-          NEW=$(echo "$OLD_NEW" | awk '{print $2}')
-          echo "old=$OLD" >> $GITHUB_OUTPUT
-          echo "version=$NEW" >> $GITHUB_OUTPUT
-          echo "Bumped: $OLD → $NEW"
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add lib/version.dart pubspec.yaml
-          git commit -m "chore: bump version to v${NEW} [skip ci]" || exit 0
-          git pull --rebase origin main
-          git push origin main
-
-  # ── Build Release APKs ────────────────────────────────────────────────
-  build:
-    needs: bump
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: main
           fetch-depth: 0
+
+      - name: Read Current Version
+        id: version
+        run: |
+          VER=$(grep "appVersion =" lib/version.dart | awk -F"'" '{print $2}')
+          echo "version=${VER}" >> $GITHUB_OUTPUT
+          echo "Building Fun Kanji release v${VER}"
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -93,7 +67,7 @@ jobs:
 
       - name: Rename APKs for Release
         run: |
-          VER="${{ needs.bump.outputs.version }}"
+          VER="${{ steps.version.outputs.version }}"
           mkdir -p release_apks
           cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk release_apks/FunKanji-v${VER}-arm64-v8a.apk
           cp build/app/outputs/flutter-apk/app-x86_64-release.apk release_apks/FunKanji-v${VER}-x86_64.apk
@@ -105,9 +79,9 @@ jobs:
           name: fun-kanji-apks
           path: release_apks/
 
-  # ── GitHub Release ───────────────────────────────────────────────────
+  # ── 2. GitHub Release ────────────────────────────────────────────────
   release:
-    needs: [bump, build]
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -118,10 +92,10 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Set Version
+      - name: Set Version Tag
         id: version
         run: |
-          VER="${{ needs.bump.outputs.version }}"
+          VER="${{ needs.build.outputs.version }}"
           echo "tag=v${VER}" >> $GITHUB_OUTPUT
           echo "display=${VER}" >> $GITHUB_OUTPUT
 
@@ -147,3 +121,31 @@ jobs:
             apks/*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── 3. Bump Version ONLY After Successful Release ────────────────────
+  bump:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
+          fetch-depth: 0
+
+      - name: Bump Patch Version Post-Release
+        id: bump
+        run: |
+          OLD_NEW=$(python3 tools/bump_version.py)
+          OLD=$(echo "$OLD_NEW" | awk '{print $1}')
+          NEW=$(echo "$OLD_NEW" | awk '{print $2}')
+          echo "Release v$OLD published successfully! Preparing repository for next version: v$NEW"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add lib/version.dart pubspec.yaml
+          git commit -m "chore: prepare repository for v${NEW} [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push origin main

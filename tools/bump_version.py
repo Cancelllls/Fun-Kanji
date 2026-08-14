@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Bump the patch version in lib/version.dart and pubspec.yaml.
+"""Bump the patch version in lib/version.dart and pubspec.yaml upon successful release.
 
 Usage:
   python3 tools/bump_version.py          # bump and print old→new
   python3 tools/bump_version.py --dry    # print what would happen
 
-Initial Release Rule:
-  If v1.0.0 tag does not exist in git, version stays at 1.0.0 for initial release v1.0.0.
-  Once v1.0.0 tag exists, bumps patch (1.0.0 → 1.0.1 → 1.0.2).
+Bumps patch (1.0.0 → 1.0.1 → 1.0.2). Rolls over at 9:
+  1.0.9 → 1.1.0
+  1.9.9 → 2.0.0
 """
-import argparse, re, subprocess, sys
+import argparse, re, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -22,27 +22,12 @@ DART_PATTERN = re.compile(
 PUBSPEC_PATTERN = re.compile(r"^(version:\s*)(\d+\.\d+\.\d+)\+(\d+)(.*)$", re.MULTILINE)
 
 
-def has_git_tag(tag: str) -> bool:
-    try:
-        out = subprocess.check_output(
-            ["git", "tag", "-l", tag], stderr=subprocess.DEVNULL
-        ).decode().strip()
-        return bool(out)
-    except Exception:
-        return False
-
-
 def bump(version_str: str) -> tuple[int, int, int]:
     """Return (major, minor, patch) for the NEXT version."""
     m = re.match(r"^(\d+)\.(\d+)\.(\d+)$", version_str)
     if not m:
         raise ValueError(f"Not a valid semver: {version_str}")
     major, minor, patch = int(m[1]), int(m[2]), int(m[3])
-
-    # If initial 1.0.0 release has not been tagged yet, keep as 1.0.0
-    if version_str == "1.0.0" and not has_git_tag("v1.0.0"):
-        return major, minor, patch
-
     patch += 1
     if patch > 9:
         patch = 0
@@ -62,7 +47,7 @@ def fmt_ver(major: int, minor: int, patch: int) -> str:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Bump Fun Kanji patch version")
+    parser = argparse.ArgumentParser(description="Bump Fun Kanji patch version post-release")
     parser.add_argument("--dry", action="store_true", help="Print only, don't write")
     args = parser.parse_args()
 
