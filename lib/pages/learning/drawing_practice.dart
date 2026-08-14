@@ -283,28 +283,32 @@ class _DrawingPracticeScreenState extends State<DrawingPracticeScreen> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Grid lines
+                    // Grid lines & Guide isolated on GPU layer
                     if (_showGrid)
-                      CustomPaint(
-                        size: const Size(300, 300),
-                        painter: GridPainter(
-                          scheme: scheme,
-                          gridType: _gridType,
+                      RepaintBoundary(
+                        child: CustomPaint(
+                          size: const Size(300, 300),
+                          painter: GridPainter(
+                            scheme: scheme,
+                            gridType: _gridType,
+                          ),
                         ),
                       ),
                     // Reference Watermark Kanji
-                    Text(
-                      widget.kanji,
-                      style: GoogleFonts.yujiSyuku(
-                        textStyle: TextStyle(
-                          fontSize: 220,
-                          color: scheme.onSurface.withValues(
-                            alpha: _showGuide ? 0.22 : 0.05,
+                    RepaintBoundary(
+                      child: Text(
+                        widget.kanji,
+                        style: GoogleFonts.yujiSyuku(
+                          textStyle: TextStyle(
+                            fontSize: 220,
+                            color: scheme.onSurface.withValues(
+                              alpha: _showGuide ? 0.22 : 0.05,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    // Drawing Interactive Canvas
+                    // Drawing Interactive Canvas isolated on GPU layer
                     GestureDetector(
                       onPanStart: (details) {
                         if (_compareMode) return;
@@ -324,12 +328,14 @@ class _DrawingPracticeScreenState extends State<DrawingPracticeScreen> {
                         currentStroke = [];
                         _evaluateDrawing();
                       },
-                      child: CustomPaint(
-                        size: const Size(300, 300),
-                        painter: CalligraphyStrokePainter(
-                          strokes: strokes,
-                          color: scheme.onSurface,
-                          strokeWidth: _strokeWidth,
+                      child: RepaintBoundary(
+                        child: CustomPaint(
+                          size: const Size(300, 300),
+                          painter: CalligraphyStrokePainter(
+                            strokes: strokes,
+                            color: scheme.onSurface,
+                            strokeWidth: _strokeWidth,
+                          ),
                         ),
                       ),
                     ),
